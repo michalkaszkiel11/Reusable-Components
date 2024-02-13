@@ -1,7 +1,14 @@
 import { useState } from "react";
-export const StarRating = ({ maxRating = 5 }) => {
+import PropTypes from "prop-types";
+
+export const StarRating = ({
+    maxRating = 5,
+    color = "#fcc419",
+    size = 36,
+    defaultRating = 0,
+}) => {
     const [rating, setRating] = useState(0);
-    const [starHover, setStarHover] = useState(1);
+    const [starHover, setStarHover] = useState(defaultRating);
     const contStyle = {
         width: "100%",
         height: "100%",
@@ -13,11 +20,19 @@ export const StarRating = ({ maxRating = 5 }) => {
         display: "flex",
     };
     const textStyle = {
+        color,
         lineHeight: "0",
         margin: "0",
+        fontSize: `${size}px`,
     };
     const handleRating = (rating) => {
         setRating(rating);
+    };
+    const starStyle = {
+        width: `${size}px`,
+        height: `${size}px`,
+        display: "block",
+        cursor: "pointer",
     };
     return (
         <div style={contStyle}>
@@ -25,25 +40,21 @@ export const StarRating = ({ maxRating = 5 }) => {
                 {Array.from({ length: maxRating }, (_, i) => (
                     <Star
                         key={i}
-                        style={textStyle}
                         onRate={() => handleRating(i + 1)}
                         full={starHover ? starHover >= i + 1 : rating >= i + 1}
                         onHoverIn={() => setStarHover(i + 1)}
                         onHoverOut={() => setStarHover(0)}
+                        starStyle={starStyle}
+                        color={color}
                     ></Star>
                 ))}
             </div>
-            <p>{rating || ""}</p>
+            <p style={textStyle}>{rating || ""}</p>
         </div>
     );
 };
-const starStyle = {
-    width: "48px",
-    height: "48px",
-    display: "block",
-    cursor: "pointer",
-};
-function Star({ onRate, full, onHoverIn, onHoverOut }) {
+
+function Star({ onRate, full, onHoverIn, onHoverOut, starStyle, color }) {
     return (
         <span
             role="button"
@@ -56,7 +67,7 @@ function Star({ onRate, full, onHoverIn, onHoverOut }) {
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
-                    fill="#000"
+                    fill={color}
                     stroke="#000"
                 >
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -79,3 +90,9 @@ function Star({ onRate, full, onHoverIn, onHoverOut }) {
         </span>
     );
 }
+StarRating.propTypes = {
+    maxRating: PropTypes.number,
+    defaultRating: PropTypes.number,
+    color: PropTypes.string,
+    size: PropTypes.number,
+};
